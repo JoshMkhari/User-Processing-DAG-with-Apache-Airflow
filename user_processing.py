@@ -4,10 +4,9 @@ from pandas import json_normalize
 
 from airflow import DAG
 
-# from airflow.operators.bash import BashOperator
+from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.operators.python import PythonOperator
-from airflow.providers.sqlite.operators.sqlite import SqliteOperator
 from airflow.providers.http.operators.http import SimpleHttpOperator
 from airflow.providers.http.sensors.http import HttpSensor
 
@@ -45,9 +44,9 @@ with DAG('user_processing', schedule_interval='@daily',
         catchup=False) as dag:
         # Define tasks/operators
         
-    creating_table = SqliteOperator(
+    creating_table = PostgresOperator(
         task_id='creating_table',
-        sqlite_conn_id='db_sqlite',
+        postgres_conn_id='postgres',
         sql='''
             CREATE TABLE IF NOT EXISTS users (
                 firstname TEXT NOT NULL,
